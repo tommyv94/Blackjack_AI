@@ -81,6 +81,7 @@ public class BlackJack {
 
 	public static void main(String[] args) throws InterruptedException {
 		Deck deck = new Deck();
+		Deck side = new Deck(0);
 		
 		Dealer dealer = new Dealer();
 		Player player = new Player(100);
@@ -90,11 +91,11 @@ public class BlackJack {
 			Display(player, dealer);
 			pot += player.placeBet(sc);
 			
-			deck.start(player, dealer);
+			deck.start(player, dealer, side);
 			Display(player, dealer);
 			
-			player.go(deck,sc,dealer);
-			dealer.go(deck);
+			player.go(deck,sc,dealer,side);
+			dealer.go(deck,side);
 			
 			Results(player, dealer);
 			
@@ -102,8 +103,8 @@ public class BlackJack {
 			System.out.println("Dealer's winnings: "+dealer.getMoney());
 			
 			System.out.println("\nReturning Cards...\n");
-			player.returnHand();
-			dealer.returnHand();
+			player.returnHand(side);
+			dealer.returnHand(side);
 			
 			if(player.getMoney() > 0.0) {
 				System.out.println("You still have some money. Play Again? (y or n)");

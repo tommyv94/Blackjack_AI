@@ -64,10 +64,10 @@ public class Dealer extends Player {
 		System.out.println("\n"+this.value);
 	}
 	
-	public void go(Deck deck) throws InterruptedException {
+	public void go(Deck deck, Deck s) throws InterruptedException {
 		System.out.println("\nDealer's Turn\n");
 		while(this.revealValue() < 17) {
-			Card c = deck.Deal();
+			Card c = deck.Deal(s);
 			this.addCard(c);
 			this.revealHand();
 			System.out.println(this.revealValue());

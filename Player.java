@@ -41,7 +41,7 @@ public class Player {
 		System.out.println("\n"+this.value);
 	}
 	
-	public void go(Deck deck, Scanner sc, Dealer dealer) throws InterruptedException {
+	public void go(Deck deck, Scanner sc, Dealer dealer, Deck s) throws InterruptedException {
 		while(value <= 21) {
 			System.out.println("\nhit or stand?");
 			String command = sc.nextLine();
@@ -49,7 +49,7 @@ public class Player {
 				break;
 			}
 			else if(command.equals("hit")) {
-				Card c = deck.Deal();
+				Card c = deck.Deal(s);
 				this.addCard(c);
 				System.out.println("\nYou:");
 				this.showHand();
@@ -92,7 +92,10 @@ public class Player {
 		return hand;
 	}
 
-	public void returnHand() {
+	public void returnHand(Deck s) {
+		for(int i = 0; i < this.hand.size(); i++) {
+			s.deck.add(this.hand.get(i));
+		}
 		this.hand.clear();
 		this.value = 0;
 		

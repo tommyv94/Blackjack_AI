@@ -9,6 +9,10 @@ public class Deck {
 		this.buildDeck(1);
 		this.shuffleDeck();
 	}
+	
+	public Deck(int i) {
+		
+	}
 		
 	public void shuffleDeck() {
 		Collections.shuffle(deck);
@@ -118,11 +122,18 @@ public class Deck {
 	    }
 	}
 	
-	public Card Deal() throws InterruptedException {
+	public void merge(Deck s) {
+		for(int i = 0; i < s.deck.size(); i++) {
+			Card c = s.deck.get(i);
+			this.deck.add(c);
+		}
+		s.deck.clear();
+	}
+	
+	public Card Deal(Deck s) throws InterruptedException {
 		if(deck.size() <= rs) {
 			System.out.println("\nReshuffle...");
-			deck.clear();
-			this.buildDeck(1);
+			this.merge(s);
 			this.shuffleDeck();
 			Thread.sleep(5000);
 		}
@@ -131,11 +142,10 @@ public class Deck {
 		return c;
 	}
 	
-	public void start(Player p, Dealer d) throws InterruptedException {
+	public void start(Player p, Dealer d, Deck s) throws InterruptedException {
 		if(this.deck.size() < 4) {
 			System.out.println("\nReshuffle...");
-			deck.clear();
-			this.buildDeck(1);
+			this.merge(s);
 			this.shuffleDeck();
 			Thread.sleep(5000);
 		}
