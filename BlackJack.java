@@ -87,9 +87,11 @@ public class BlackJack {
 		while(player.getMoney() > 0.0) {
 			System.out.println("\nStarting Round...\n");
 			
-			deck.start(player, dealer);
 			Display(player, dealer);
 			pot += player.placeBet(sc);
+			
+			deck.start(player, dealer);
+			Display(player, dealer);
 			
 			player.go(deck,sc,dealer);
 			dealer.go(deck);
