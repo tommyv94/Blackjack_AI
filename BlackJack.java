@@ -4,16 +4,18 @@ import java.util.*;
 public class BlackJack {
 	
 	static Scanner sc = new Scanner(System.in);
-	static double pot = 0.0;
-			
+	static double pot = 0.0; //pot
+	
+	//displays the player and dealer's hands, values and money
 	public static void Display(Player player, Player dealer) {
 		System.out.println("Player:");
 		player.showHand();
-		System.out.println("Money: $"+player.getMoney());
+		System.out.printf("Money: $%.2f",player.getMoney());
 		
 		dealer.showHand();
 	}
 	
+	//determines who won and distributes winnings properly
 	public static void Results(Player player, Dealer dealer) {
 		int playerValue = player.getValue();
 		int dealerValue = dealer.revealValue();
@@ -50,6 +52,7 @@ public class BlackJack {
 			System.out.println("You Win, House Loses");
 		}
 		else if(playerValue == 21 && dealerValue == 21){
+			//blackjack wins 3:2
 			if(player.getHand().size() == 2 && dealer.getHand().size() != 2) {
 				double pay = (pot/2)*3;
 				player.addMoney(pay);
@@ -66,13 +69,14 @@ public class BlackJack {
 				System.out.println("Tie. It's A Push");
 			}
 		}
-		winDisplay(player, dealer);
+		winDisplay(player, dealer); //displays winner information
 	}
 	
+	//reveals all of the dealer's information as well as the player's
 	private static void winDisplay(Player player, Dealer dealer) {
 		System.out.println("\nPlayer:");
 		player.showHand();
-		System.out.println("Money: "+player.getMoney());
+		System.out.printf("Money: $%.2f",player.getMoney());
 		
 		System.out.println("\nDealer:");
 		dealer.revealHand();
@@ -80,41 +84,52 @@ public class BlackJack {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		Deck deck = new Deck();
-		Deck side = new Deck(0);
+		Deck deck = new Deck(); //main deck
+		Deck side = new Deck(0); //side deck
+		int round = 1; //round #
 		
-		Dealer dealer = new Dealer();
-		Player player = new Player(100);
+		Dealer dealer = new Dealer();  //dealer
+		System.out.println("Please enter your buy in: ");
+		double m = sc.nextDouble();  //your buy in
+		
+		Player player = new Player(m); //player created with buy in
 		while(player.getMoney() > 0.0) {
-			System.out.println("\nStarting Round...\n");
+			System.out.println("\nStarting Round " + round+"...\n");
 			
+			Display(player, dealer); //displays the information
+			if(round > 1) CardCounting.print(); //displays the count or the player
+			pot += player.placeBet(sc); //player places bet
+			
+			deck.start(player, dealer, side); //initial deal
 			Display(player, dealer);
-			pot += player.placeBet(sc);
 			
-			deck.start(player, dealer, side);
-			Display(player, dealer);
+			player.go(deck,sc,dealer,side); //player goes until they stand or bust
+			dealer.go(deck,side); //dealer goes until they get 17 or higher
 			
-			player.go(deck,sc,dealer,side);
-			dealer.go(deck,side);
+			Results(player, dealer); // show results
 			
-			Results(player, dealer);
+			//display your total winnings
+			System.out.printf("\nYour winnings: $%.2f",player.getMoney());
 			
-			System.out.println("\nYour winnings: "+player.getMoney());
-			System.out.println("Dealer's winnings: "+dealer.getMoney());
-			
+			//return all the cards to the side deck
 			System.out.println("\nReturning Cards...\n");
 			player.returnHand(side);
 			dealer.returnHand(side);
 			
+			//if the player still as money 
+			//show them the count and then ask if they would like to contiune playing
 			if(player.getMoney() > 0.0) {
+				CardCounting.printCount();
 				System.out.println("You still have some money. Play Again? (y or n)");
 				String c = sc.nextLine();
 				if(c.equals("n")) {
 					break;
 				}
+				round++;
 			}
 		}
 		
+		//if the player ends the game with no money then thank them for playing and end.
 		if(player.getMoney() <= 0.0) {
 			System.out.println("\nThanks for playing but your out of money.");
 		}

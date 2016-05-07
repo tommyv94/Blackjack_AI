@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Player {
 	Vector<Card> hand;
+	double minBet;
 	int value;
 	double money;
 	
@@ -9,12 +10,14 @@ public class Player {
 		this.hand = new Vector<Card>();
 		this.value = 0;
 		this.money = 0;
+		this.minBet = 0;
 	}
 	
 	public Player(double money) {
 		this.hand = new Vector<Card>();
 		this.value = 0;
 		this.money = money;
+		this.minBet = money*.10;
 	}
 	
 	public void addMoney(double m) {
@@ -27,8 +30,17 @@ public class Player {
 	}
 	
 	public double placeBet(Scanner sc) {
-		System.out.print("\nPlace your bet: ");
-		double bet = sc.nextDouble();
+		double bet = 0;
+		while(true) {
+			System.out.printf("\nPlace your bet (min $%.2f): ",minBet);
+			bet = sc.nextDouble();
+			if(bet < minBet) {
+				System.out.println("\nBet too low try again.");
+			}
+			else {
+				break;
+			}
+		}
 		money -= bet;
 		return bet;
 	}
@@ -51,6 +63,8 @@ public class Player {
 			else if(command.equals("hit")) {
 				Card c = deck.Deal(s);
 				this.addCard(c);
+				CardCounting.cardCount(c,minBet);
+				CardCounting.printCount();
 				System.out.println("\nYou:");
 				this.showHand();
 				dealer.showHand();
@@ -71,7 +85,9 @@ public class Player {
 	public int getValue() {
 		return this.value;
 	}
-		
+	
+	//sets the hand value. If value is over 21 and an ace
+	//is present take 10 away to change ace to 1
 	public void setValue() {
 		int temp = 0;
 		boolean ace = false;
@@ -91,7 +107,8 @@ public class Player {
 	public Vector<Card> getHand() {
 		return hand;
 	}
-
+	
+	//return cards to the hand by adding to side deck
 	public void returnHand(Deck s) {
 		for(int i = 0; i < this.hand.size(); i++) {
 			s.deck.add(this.hand.get(i));

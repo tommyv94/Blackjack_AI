@@ -2,7 +2,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 public class Deck {
-	public int rs = 26;
+	public int rs = 26; //shuffle count
 	public Vector<Card> deck = new Vector<Card>();
 	
 	public Deck() {
@@ -17,6 +17,7 @@ public class Deck {
 	public void shuffleDeck() {
 		Collections.shuffle(deck);
 	}
+	
 	public void printDeck() {
 		for( int i = 0; i < deck.size(); i++) {
 			Card c = deck.get(i);
@@ -24,6 +25,7 @@ public class Deck {
 		}
 	}
 	
+	//builds the deck
 	private void buildDeck(int x) {
 		if (0 < x && x < 14) {
 	        if (x == 13) {
@@ -122,6 +124,7 @@ public class Deck {
 	    }
 	}
 	
+	//merges the side deck with the main deck and then shuffles
 	public void merge(Deck s) {
 		for(int i = 0; i < s.deck.size(); i++) {
 			Card c = s.deck.get(i);
@@ -130,7 +133,9 @@ public class Deck {
 		s.deck.clear();
 	}
 	
+	//deals the cards out
 	public Card Deal(Deck s) throws InterruptedException {
+		//If the deck size is rs or lower, shuffle it with the side deck
 		if(deck.size() <= rs) {
 			System.out.println("\nReshuffle...");
 			this.merge(s);
@@ -138,28 +143,35 @@ public class Deck {
 			Thread.sleep(5000);
 		}
 		Card c = deck.firstElement();
-		deck.remove(0);
+		deck.remove(0); //removes card from deck after dealt
 		return c;
 	}
 	
+	//initial deal at the beginning of a hand
 	public void start(Player p, Dealer d, Deck s) throws InterruptedException {
+		//Double check to make sure there are 4 cards to deal or shuffle
 		if(this.deck.size() < 4) {
 			System.out.println("\nReshuffle...");
 			this.merge(s);
 			this.shuffleDeck();
+			CardCounting.resetCount();
 			Thread.sleep(5000);
 		}
+		//deals out cards adding to the count as they are dealt
 		for(int i = 0; i < 4; i++) {
 			if(i == 0 || i == 2) {
 				Card c = this.deck.firstElement();
 				this.deck.remove(0);
 				p.addCard(c);
+				CardCounting.cardCount(c,0);
 			}
 			else {
 				Card c = this.deck.firstElement();
 				this.deck.remove(0);
 				d.addCard(c);
+				CardCounting.cardCount(c,0);
 			}
 		}
+		CardCounting.printCount();
 	}
 }

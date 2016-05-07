@@ -1,7 +1,7 @@
 public class Card {
 	
 	private String suit;
-	private String val;
+	private String val; //value as string
 	private int value;
 	
 	public Card(String suit, String val) {
