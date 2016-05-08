@@ -10,7 +10,7 @@ public class CardCounting {
 		if(c.getValue() == 10 || c.getVal().equals("A")) {
 			running_count--;
 		}
-		else {
+		else if(c.getValue()>= 2 && c.getValue() <= 6) {
 			running_count++;
 		}
 		calcAdv();
